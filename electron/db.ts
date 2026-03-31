@@ -440,12 +440,13 @@ function guessExtension(mimeType: string, originalName?: string) {
 function extractManagedImagePaths(html: string, imagesDir: string) {
   const matches = Array.from(html.matchAll(/src=(['"])(file:[^'"]+)\1/g));
   const paths = new Set<string>();
+  const normalizedImagesDir = normalizePathForComparison(imagesDir);
 
   for (const match of matches) {
     try {
-      const filePath = fileURLToPath(match[2]);
+      const filePath = path.normalize(fileURLToPath(match[2]));
 
-      if (filePath.startsWith(imagesDir)) {
+      if (normalizePathForComparison(filePath).startsWith(normalizedImagesDir)) {
         paths.add(path.normalize(filePath));
       }
     } catch {
@@ -454,6 +455,11 @@ function extractManagedImagePaths(html: string, imagesDir: string) {
   }
 
   return Array.from(paths);
+}
+
+function normalizePathForComparison(filePath: string) {
+  const normalized = path.normalize(filePath);
+  return process.platform === 'win32' ? normalized.toLowerCase() : normalized;
 }
 
 async function replaceDataUrlsWithFiles(
@@ -766,25 +772,23 @@ class DatabaseStore {
     );
   }
 
-  private getAllNoteHtml(excludingNoteId?: string) {
-    const rows = excludingNoteId
-      ? this.getRows<{ contentHtml: string }>('SELECT content_html AS contentHtml FROM notes WHERE id != ?', [excludingNoteId])
-      : this.getRows<{ contentHtml: string }>('SELECT content_html AS contentHtml FROM notes');
+  private getAllNoteHtml() {
+    const rows = this.getRows<{ contentHtml: string }>('SELECT content_html AS contentHtml FROM notes');
 
     return rows.map((row) => row.contentHtml);
   }
 
-  private cleanupUnusedImages(candidates: string[], excludingNoteId?: string) {
+  private cleanupUnusedImages(candidates: string[]) {
     if (candidates.length === 0) {
       return;
     }
 
-    const remainingHtml = this.getAllNoteHtml(excludingNoteId).join('\n');
+    const remainingImagePaths = new Set(
+      this.getAllNoteHtml().flatMap((html) => extractManagedImagePaths(html, this.paths.imagesDir)).map(normalizePathForComparison)
+    );
 
     for (const candidate of candidates) {
-      const fileUrl = pathToFileURL(candidate).toString();
-
-      if (remainingHtml.includes(fileUrl)) {
+      if (remainingImagePaths.has(normalizePathForComparison(candidate))) {
         continue;
       }
 
@@ -1645,7 +1649,7 @@ class DatabaseStore {
     this.persist();
 
     const previousImages = extractManagedImagePaths(existingNote.contentHtml, this.paths.imagesDir);
-    this.cleanupUnusedImages(previousImages, noteId);
+    this.cleanupUnusedImages(previousImages);
 
     return this.getSnapshot();
   }
@@ -1662,7 +1666,7 @@ class DatabaseStore {
     this.persist();
 
     const previousImages = extractManagedImagePaths(existingNote.contentHtml, this.paths.imagesDir);
-    this.cleanupUnusedImages(previousImages, noteId);
+    this.cleanupUnusedImages(previousImages);
 
     return this.getSnapshot();
   }

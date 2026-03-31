@@ -1,6 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 
 const COLOR_PATTERNS = [/^#[0-9a-fA-F]{3,8}$/, /^rgb\((\s*\d+\s*,){2}\s*\d+\s*\)$/i, /^rgba\((\s*\d+\s*,){3}\s*(0|1|0?\.\d+)\s*\)$/i];
+const IMAGE_URI_SCHEMES = ['http', 'https', 'file', 'data', 'blob'];
 
 const NOTE_SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
@@ -61,7 +62,12 @@ const NOTE_SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
     tr: ['style', 'class', 'data-*'],
     '*': ['style', 'class', 'data-*']
   },
-  allowedSchemes: ['http', 'https', 'file', 'data', 'blob'],
+  allowedSchemes: IMAGE_URI_SCHEMES,
+  allowedSchemesAppliedToAttributes: ['href', 'src'],
+  allowedSchemesByTag: {
+    a: ['http', 'https', 'file'],
+    img: IMAGE_URI_SCHEMES
+  },
   allowProtocolRelative: false,
   disallowedTagsMode: 'discard',
   allowedStyles: {
