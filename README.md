@@ -1,6 +1,6 @@
 # AICourseNote
 
-一个面向网课与课程学习场景的 AI 辅助桌面笔记应用，支持富文本记录、图片整理、PDF 导出、系统音频转写和 AI 分析，帮助把零散课堂内容沉淀成更易复习的学习资料。
+一个面向网课学习场景的 AI 辅助桌面笔记应用，支持富文本记录、图片整理、PDF 导出、系统音频转写和 AI 分析，帮助把零散课堂内容沉淀成更易复习的学习资料。
 
 ## 项目简介
 
@@ -47,77 +47,6 @@
 - API key 通过系统安全存储管理，不直接写入数据库
 - 设置页可查看当前数据库路径与图片目录路径
 
-## 技术栈
-
-- Electron
-- React 18
-- TypeScript
-- electron-vite
-- TipTap
-- sql.js
-- sanitize-html
-- keytar
-
-## 项目结构
-
-```text
-AICourseNote/
-├─ src/          # React 渲染层
-├─ electron/     # Electron 主进程与 preload 桥接层
-├─ scripts/      # 构建与辅助脚本
-├─ docs/         # 开发文档
-├─ build/        # 图标等构建资源
-└─ package.json
-```
-
-## 本地开发
-
-安装依赖：
-
-```bash
-npm install
-```
-
-启动开发模式：
-
-```bash
-npm run dev
-```
-
-构建并本地启动：
-
-```bash
-npm run build
-npm run start
-```
-
-类型检查：
-
-```bash
-npm run typecheck
-```
-
-## 打包命令
-
-生成 Windows 便携版：
-
-```bash
-npm run dist:win
-```
-
-生成目录版程序：
-
-```bash
-npm run dist:dir
-```
-
-生成本地安装包：
-
-```bash
-npm run dist:local
-```
-
-默认打包输出目录为 `release/`。
 
 ## 当前状态
 
@@ -131,4 +60,3 @@ npm run dist:local
 - 本地安装分发
 
 当前版本仍在持续迭代中，后续会继续完善模型接入、学习辅助流程和整体产品体验。
-
