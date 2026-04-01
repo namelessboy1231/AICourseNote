@@ -1,7 +1,7 @@
 {
   "name": "aicoursenote",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "AICourseNote",
   "description": "AI-assisted desktop course note assistant",
   "main": "out/main/main.js",
@@ -68,7 +68,6 @@
     ],
     "win": {
       "icon": "build/icon.ico",
-      "signAndEditExecutable": false,
       "artifactName": "${productName}-${version}-${arch}.${ext}",
       "target": [
         {

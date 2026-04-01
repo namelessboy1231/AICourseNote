@@ -3,6 +3,8 @@ out/
 release/
 .tmp-data/
 tmp/
+setup-test/
+local-test-install/
 
 *.log
 *.tsbuildinfo
