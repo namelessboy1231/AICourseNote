@@ -5,7 +5,7 @@ import { AudioCaptureManager } from './audio-capture-manager';
 import { AsrTranscriptionService } from './asr-service';
 import { getDatabaseStore } from './db';
 import { sanitizeNoteHtml } from './html-sanitizer';
-import { applyLocalRuntimePaths } from './local-runtime';
+import { applyLocalRuntimePaths, LOCAL_RUNTIME_CONFIG_FILE, writeLocalRuntimeConfig } from './local-runtime';
 import { clearAllSecureApiKeys } from './secure-store';
 
 type AiAnalysisType = 'summary' | 'key-points' | 'outline' | 'review-questions' | 'action-items';
@@ -34,6 +34,13 @@ async function runMaintenanceTask(taskName: string) {
     case 'clear-secure-store':
       await clearAllSecureApiKeys();
       return 0;
+    case 'write-local-runtime-config': {
+      const dataDir = getCliArgumentValue('--local-data-dir').trim() || 'data';
+
+      const configPath = path.join(path.dirname(process.execPath), LOCAL_RUNTIME_CONFIG_FILE);
+      writeLocalRuntimeConfig(configPath, dataDir);
+      return 0;
+    }
     default:
       throw new Error(`未知维护任务：${taskName}`);
   }

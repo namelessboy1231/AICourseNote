@@ -95,3 +95,26 @@ export function applyLocalRuntimePaths() {
 
   return paths;
 }
+
+export function writeLocalRuntimeConfig(configPath: string, dataDir: string) {
+  const normalizedConfigPath = path.resolve(configPath);
+  const normalizedDataDirInput = dataDir.trim() || 'data';
+  const normalizedDataDir = path.isAbsolute(normalizedDataDirInput)
+    ? path.resolve(normalizedDataDirInput)
+    : path.resolve(path.dirname(normalizedConfigPath), normalizedDataDirInput);
+
+  fs.mkdirSync(path.dirname(normalizedConfigPath), { recursive: true });
+  fs.mkdirSync(normalizedDataDir, { recursive: true });
+
+  const config: LocalRuntimeConfigFile = {
+    mode: 'directory-local',
+    dataDir: normalizedDataDirInput
+  };
+
+  fs.writeFileSync(normalizedConfigPath, `${JSON.stringify(config, null, 2)}\n`, 'utf-8');
+
+  return {
+    configPath: normalizedConfigPath,
+    dataDir: normalizedDataDir
+  };
+}

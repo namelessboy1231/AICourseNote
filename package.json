@@ -1,7 +1,7 @@
 {
   "name": "aicoursenote",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "AICourseNote",
   "description": "AI-assisted desktop course note assistant",
   "main": "out/main/main.js",
@@ -10,6 +10,7 @@
     "build": "electron-vite build",
     "dist:win": "npm run build && electron-builder --win portable",
     "dist:dir": "npm run build && electron-builder --win dir",
+    "dist:setup": "npm run build && electron-builder --win nsis",
     "dist:local": "npm run dist:dir && node scripts/local-installer/build-local-installer.mjs",
     "preview": "electron-vite preview",
     "start": "electron .",
@@ -83,6 +84,13 @@
           ]
         }
       ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "include": "build/installer.nsh",
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
     },
     "extraMetadata": {
       "main": "out/main/main.js"
